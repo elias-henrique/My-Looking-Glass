@@ -8,8 +8,8 @@ body {
 
 .App {
   text-align: center;
-  padding: 20px;
-  min-height: 100vh;
+  padding: 40px;
+  min-height: 150vh;
 }
 
 .App-header {
@@ -19,9 +19,9 @@ body {
 }
 
 .logo {
-  width: 180px;
+  width: 200px;
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .button-container {
@@ -150,7 +150,6 @@ body {
   color: #000000;
   background-color: #ffffff;
 }
-
 
 .text-muted {
   color: #ff0707;
