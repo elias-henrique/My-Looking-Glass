@@ -56,10 +56,7 @@ def fetch_data(asn: int) -> Dict[str, Any]:
             response = requests.get(
                 url, headers={'Accept': 'application/json'})
             response.raise_for_status()
-            if 'peers' in url:
-                data['data']['peers'] = response.json()['data']
-            else:
-                data['data']['as'] = response.json()['data']
+            return response.json()['data']
     except requests.RequestException as e:
         raise HTTPException(
             status_code=400, detail=f"Error fetching data from {url}: {e}")

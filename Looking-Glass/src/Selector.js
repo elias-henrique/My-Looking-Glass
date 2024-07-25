@@ -3,38 +3,41 @@ import './App.css';  // Use a separate CSS file for styling
 
 function ASInfo({ asInfo }) {
     return (
-        <div className="as-info">
-            <h2>{asInfo.name}</h2>
-            <p><strong>ASN:</strong> {asInfo.asn}</p>
-            <p><strong>Descrição:</strong> {asInfo.description_short}</p>
-            <p><strong>País:</strong> {asInfo.country_code}</p>
-            <p><strong>Website:</strong> <a href={asInfo.website}>{asInfo.website}</a></p>
-            <p><strong>Looking Glass:</strong> <a href={asInfo.looking_glass}>{asInfo.looking_glass}</a></p>
-            <p><strong>Estimativa de Tráfego:</strong> {asInfo.traffic_estimation}</p>
-            <p><strong>Relação de Tráfego:</strong> {asInfo.traffic_ratio}</p>
+        <div className="as-info-card">
+            <h2 className="as-info-title">{asInfo.name}</h2>
+            <div className="as-info-content">
+                <p><strong>ASN:</strong> {asInfo.asn}</p>
+                <p><strong>Descrição:</strong> {asInfo.description_short}</p>
+                <p><strong>País:</strong> {asInfo.country_code}</p>
+                <p><strong>Website:</strong> <a href={asInfo.website}>{asInfo.website}</a></p>
+                <p><strong>Looking Glass:</strong> <a href={asInfo.looking_glass}>{asInfo.looking_glass}</a></p>
+                <p><strong>Estimativa de Tráfego:</strong> {asInfo.traffic_estimation}</p>
+                <p><strong>Relação de Tráfego:</strong> {asInfo.traffic_ratio}</p>
+            </div>
         </div>
     );
 }
 
-function Peers({ peers }) {
-    return (
-      <div className="peers">
-        <h3>Peers</h3>
-        <div>
-          <h4>IPv4 Peers</h4>
-          {peers.ipv4_peers.map((peer, index) => (
-            <p key={index}>{peer.name} (ASN: {peer.asn})</p>
-          ))}
-        </div>
-        <div>
-          <h4>IPv6 Peers</h4>
-          {peers.ipv6_peers.map((peer, index) => (
-            <p key={index}>{peer.name} (ASN: {peer.asn})</p>
-          ))}
-        </div>
-      </div>
-    );
-  }
+
+// function Peers({ peers }) {
+//     return (
+//       <div className="peers">
+//         <h3>Peers</h3>
+//         <div>
+//           <h4>IPv4 Peers</h4>
+//           {peers.ipv4_peers.map((peer, index) => (
+//             <p key={index}>{peer.name} (ASN: {peer.asn})</p>
+//           ))}
+//         </div>
+//         <div>
+//           <h4>IPv6 Peers</h4>
+//           {peers.ipv6_peers.map((peer, index) => (
+//             <p key={index}>{peer.name} (ASN: {peer.asn})</p>
+//           ))}
+//         </div>
+//       </div>
+//     );
+//   }
 
 function Selector() {
     const [selectedOption, setSelectedOption] = useState('');
@@ -105,8 +108,8 @@ function Selector() {
             </form>
             {result && (
             <div className="card">
-                {result.data.as && <ASInfo asInfo={result.data.as} />}
-                {result.data.peers && <Peers peers={result.data.peers} />}
+                {result && <ASInfo asInfo={result} />}
+                {/* {result.data.peers && <Peers peers={result.data.peers} />} */}
             </div>
             )}
         </div>

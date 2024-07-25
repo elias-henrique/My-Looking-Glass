@@ -8,8 +8,8 @@ body {
 
 .App {
   text-align: center;
-  padding: 40px;
-  min-height: 150vh;
+  padding: 20px;
+  min-height: 100vh;
 }
 
 .App-header {
@@ -19,9 +19,9 @@ body {
 }
 
 .logo {
-  width: 200px;
+  width: 180px;
   height: auto;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .button-container {
@@ -102,8 +102,8 @@ body {
 }
 
 .card-header {
-  background-color: #010817;
-  color: white;
+  background-color: #333;
+  color: #ffffff;
   padding: 20px;
   font-size: 20px;
   font-weight: bold;
@@ -112,7 +112,7 @@ body {
 }
 
 .card-footer {
-  background-color: #010817;
+  background-color: #333;
   color: #ffffff;
   padding: 10px 20px;
   text-align: right;
@@ -121,16 +121,58 @@ body {
   border-top: 1px solid #ddd;
 }
 
+.as-info-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  padding: 25px;
+  max-width: 600px;
+  margin: 20px auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.as-info-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
+}
+
+.as-info-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.as-info-content p {
+  font-size: 16px;
+  margin: 10px 0;
+  color: #555;
+}
+
+.as-info-content a {
+  color: #0b37b9;
+  text-decoration: none;
+}
+
+.as-info-content a:hover {
+  text-decoration: underline;
+}
+
+.as-info-content strong {
+  font-weight: bold;
+}
+
 .card-body {
   padding: 20px;
-  color: #000000;
+  color: #20232a;
+  background-color: #f0f0f0;
 }
 
 .card {
   background-color: #ffffff;
   border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 600px;
   margin: 20px auto;
@@ -138,8 +180,8 @@ body {
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.25);
 }
 
 .card-link {
@@ -147,7 +189,7 @@ body {
 }
 
 .list-group-item {
-  color: #000000;
+  color: #20232a;
   background-color: #ffffff;
 }
 
