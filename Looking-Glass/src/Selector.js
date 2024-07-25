@@ -18,31 +18,47 @@ function ASInfo({ asInfo }) {
     );
 }
 
-
-// function Peers({ peers }) {
-//     return (
-//       <div className="peers">
-//         <h3>Peers</h3>
-//         <div>
-//           <h4>IPv4 Peers</h4>
-//           {peers.ipv4_peers.map((peer, index) => (
-//             <p key={index}>{peer.name} (ASN: {peer.asn})</p>
-//           ))}
-//         </div>
-//         <div>
-//           <h4>IPv6 Peers</h4>
-//           {peers.ipv6_peers.map((peer, index) => (
-//             <p key={index}>{peer.name} (ASN: {peer.asn})</p>
-//           ))}
-//         </div>
-//       </div>
-//     );
-//   }
+function WhoisData({ whoisData, irrData }) {
+    return (
+        <div className="as-info-card">
+            <h2 className="as-info-title">{whoisData.owner}</h2>
+            <div className="as-info-section">
+                <div className="as-info-content">
+                    <p><strong>Net Range:</strong> {whoisData.NetRange}</p>
+                    <p><strong>CIDR:</strong> {whoisData.inetnum}</p>
+                    <p><strong>ASN:</strong> {whoisData['aut-num']}</p>
+                    <p><strong>Address:</strong> {whoisData.Address}</p>
+                    <p><strong>City:</strong> {whoisData.City} - <strong>{whoisData.Country}</strong></p>
+                    <p><strong>CNPJ:</strong> {whoisData.ownerid}</p>
+                    <p><strong>Responsible:</strong> {whoisData.person}</p>
+                </div>
+            </div>
+            <div className="as-info-section">
+                <div className="as-info-content">
+                    {irrData.map((data, index) => (
+                        <div key={index} className="irr-info-item">
+                            <p><strong>Source:</strong> {data.source}</p>
+                            <p><strong>Route:</strong> {data.route}</p>
+                            <p><strong>Description:</strong> {data.descr}</p>
+                            <p><strong>Origin:</strong> {data.origin}</p>
+                            <p><strong>Member Of:</strong> {data['member-of']}</p>
+                            <p><strong>Notify:</strong> {data.notify}</p>
+                            <p><strong>Maintained By:</strong> {data['mnt-by']}</p>
+                            <p><strong>Changed:</strong> {data.changed}</p>
+                            <p><strong>Last Modified:</strong> {data['last-modified']}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
 
 function Selector() {
     const [selectedOption, setSelectedOption] = useState('');
     const [inputValue, setInputValue] = useState('');
-    const [result, setResult] = useState(null);  // Novo estado para armazenar o resultado
+    const [result, setResult] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChangeSelect = (event) => {
         setSelectedOption(event.target.value);
@@ -53,6 +69,7 @@ function Selector() {
     };
 
     const fetchData = async (url) => {
+        setIsLoading(true);
         try {
             const response = await fetch(url, {
                 headers: {
@@ -63,16 +80,18 @@ function Selector() {
                 throw new Error('Network response was not ok.');
             }
             const data = await response.json();
-            setResult(data);  // Armazenar o resultado no estado
+            setResult(data);
         } catch (error) {
             console.error('Failed to fetch data:', error);
-            setResult({ error: 'Failed to fetch data' });  // Armazenar mensagem de erro no estado
+            setResult({ error: 'Failed to fetch data' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setResult(null);  // Resetar o resultado antes da nova consulta
+        setResult(null);
         if (selectedOption === 'as') {
             await fetchData(`http://0.0.0.0:8000/net?asn=${inputValue}`);
         } else if (selectedOption === 'whois') {
@@ -106,15 +125,16 @@ function Selector() {
                     </div>
                 </div>
             </form>
+            {isLoading && <div className="loading">Carregando...</div>}
             {result && (
-            <div className="card">
-                {result && <ASInfo asInfo={result} />}
-                {/* {result.data.peers && <Peers peers={result.data.peers} />} */}
-            </div>
+                <div className="card">
+                    {selectedOption === 'as' && result && <ASInfo asInfo={result} />}
+                    {selectedOption === 'whois' && result && <WhoisData whoisData={result.whois_data} irrData={result.irr_data} />}
+                    {/* {result.error && <div className="error">{result.error}</div>} */}
+                </div>
             )}
         </div>
     );
 }
 
-// No final do arquivo Selector.js
 export default Selector;
