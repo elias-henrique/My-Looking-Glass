@@ -131,7 +131,7 @@ function Selector() {
                 <div className="card">
                     {selectedOption === 'as' && result && <ASInfo asInfo={result} />}
                     {selectedOption === 'whois' && result && <WhoisData whoisData={result.whois_data} irrData={result.irr_data} />}
-                    {/* {result.error && <div className="error">{result.error}</div>} */}
+                    
                 </div>
             )}
         </div>

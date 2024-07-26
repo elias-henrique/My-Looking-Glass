@@ -1,6 +1,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
 from typing import Dict, Any
+import subprocess
 import requests
 
 from bgphe import (
@@ -96,6 +97,17 @@ def meu_ip() -> Dict[str, Any]:
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
+
+
+@app.get('/ping')
+def ping(types: str, address: str) -> Dict[str, Any]:
+    try:
+        result = subprocess.getoutput(f'ping -c 5 -{types} {address}')
+        
+        ping_result = result.split('\n')
+        return {'result': ping_result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
 
 
 if __name__ == "__main__":
