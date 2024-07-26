@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './App.css';  // Use a separate CSS file for styling
+import './App.css';
 
 function ASInfo({ asInfo }) {
     return (
@@ -62,6 +62,7 @@ function Selector() {
 
     const handleChangeSelect = (event) => {
         setSelectedOption(event.target.value);
+        setResult(null);
     };
 
     const handleChangeInput = (event) => {
