@@ -100,8 +100,9 @@ def meu_ip() -> Dict[str, Any]:
 
 
 @app.get('/ping')
-def ping(types: str, address: str) -> Dict[str, Any]:
+def ping(data: str) -> Dict[str, Any]:
     try:
+        types,  address = data.split()
         result = subprocess.getoutput(f'ping -c 5 -{types} {address}')
         
         ping_result = result.split('\n')

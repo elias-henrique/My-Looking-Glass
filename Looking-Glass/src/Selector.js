@@ -18,6 +18,22 @@ function ASInfo({ asInfo }) {
     );
 }
 
+
+function PingData({ pingData }) {
+    return (
+        <div className="as-info-card">
+            <div className="as-info-content">
+                <h2 className="as-info-title">Ping</h2>
+                {pingData.map((line, index) => (
+                    <div key={index} className="ping-info-item">
+                        <p>{line}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function WhoisData({ whoisData, irrData }) {
     return (
         <div className="as-info-card">
@@ -33,29 +49,31 @@ function WhoisData({ whoisData, irrData }) {
                     <p><strong>Responsible:</strong> {whoisData.person}</p>
                 </div>
             </div>
-            <div className="as-info-section">
-                <div className="as-info-content">
-                    {irrData.map((data, index) => (
-                        <div key={index} className="irr-info-item">
-                            <p><strong>Source:</strong> {data.source}</p>
-                            <p><strong>Route:</strong> {data.route}</p>
-                            <p><strong>Description:</strong> {data.descr}</p>
-                            <p><strong>Origin:</strong> {data.origin}</p>
-                            <p><strong>Member Of:</strong> {data['member-of']}</p>
-                            <p><strong>Notify:</strong> {data.notify}</p>
-                            <p><strong>Maintained By:</strong> {data['mnt-by']}</p>
-                            <p><strong>Changed:</strong> {data.changed}</p>
-                            <p><strong>Last Modified:</strong> {data['last-modified']}</p>
-                        </div>
-                    ))}
+            {irrData && (
+                <div className="as-info-section">
+                    <div className="as-info-content">
+                        {irrData.map((data, index) => (
+                            <div key={index} className="irr-info-item">
+                                <p><strong>Source:</strong> {data.source}</p>
+                                <p><strong>Route:</strong> {data.route}</p>
+                                <p><strong>Description:</strong> {data.descr}</p>
+                                <p><strong>Origin:</strong> {data.origin}</p>
+                                <p><strong>Member Of:</strong> {data['member-of']}</p>
+                                <p><strong>Notify:</strong> {data.notify}</p>
+                                <p><strong>Maintained By:</strong> {data['mnt-by']}</p>
+                                <p><strong>Changed:</strong> {data.changed}</p>
+                                <p><strong>Last Modified:</strong> {data['last-modified']}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
 
 function Selector() {
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState('ping', 'as', 'whois');
     const [inputValue, setInputValue] = useState('');
     const [result, setResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -99,9 +117,7 @@ function Selector() {
         } else if (selectedOption === 'whois') {
             await fetchData(`http://0.0.0.0:8000/net?address=${inputValue}`);
         } else if (selectedOption === 'ping') {
-            const [types, address] = inputValue.split('');
-            console.log(types, address);
-            await fetchData(`http://0.0.0.0:8000/ping?types=${types}&address=${address}`);
+            await fetchData(`http://0.0.0.0:8000/ping?data=${inputValue}`);
         }
     };
 
@@ -136,15 +152,7 @@ function Selector() {
                 <div className="card">
                     {selectedOption === 'as' && result && <ASInfo asInfo={result} />}
                     {selectedOption === 'whois' && result && <WhoisData whoisData={result.whois_data} irrData={result.irr_data} />}
-                    {/* {selectedOption === 'ping' && result && (
-                        <div className="as-info-card">
-                            <div className="as-info-content">
-                                {result.map((line, index) => (
-                                    <p key={index}>{line}</p>
-                                ))}
-                            </div>
-                        </div>
-                    )} */}
+                    {selectedOption === 'ping' && result && <PingData pingData={result.result} />}
                 </div>
             )}
         </div>

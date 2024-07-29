@@ -18,7 +18,7 @@ def extract_irr_data(text):
         div_irr = soup.find('div', id='irr')
 
         if not div_irr:
-            return json.dumps({"error": "No IRR div found"}, ensure_ascii=False, indent=4)
+            return None
 
         div_content = str(div_irr.find_all('div'))
 

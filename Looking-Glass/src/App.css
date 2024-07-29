@@ -126,7 +126,7 @@ body {
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   padding: 25px;
-  max-width: 600px;
+  max-width: 700px;
   margin: 20px auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -162,6 +162,7 @@ body {
   font-weight: bold;
 }
 
+
 .card-body {
   padding: 20px;
   color: #20232a;
@@ -174,7 +175,7 @@ body {
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 20px auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

@@ -18,7 +18,7 @@ def extract_network_info(html_content):
         netinfo_div = soup.find('div', id='netinfo')
 
         if not netinfo_div:
-            return json.dumps({"error": "Div 'netinfo' não encontrada"}, ensure_ascii=False, indent=4)
+            return None
 
         tables = netinfo_div.find_all('table')
         if not tables:
