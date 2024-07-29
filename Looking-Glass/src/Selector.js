@@ -93,10 +93,15 @@ function Selector() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setResult(null);
+        console.log(selectedOption);
         if (selectedOption === 'as') {
             await fetchData(`http://0.0.0.0:8000/net?asn=${inputValue}`);
         } else if (selectedOption === 'whois') {
             await fetchData(`http://0.0.0.0:8000/net?address=${inputValue}`);
+        } else if (selectedOption === 'ping') {
+            const [types, address] = inputValue.split('');
+            console.log(types, address);
+            await fetchData(`http://0.0.0.0:8000/ping?types=${types}&address=${address}`);
         }
     };
 
@@ -131,7 +136,15 @@ function Selector() {
                 <div className="card">
                     {selectedOption === 'as' && result && <ASInfo asInfo={result} />}
                     {selectedOption === 'whois' && result && <WhoisData whoisData={result.whois_data} irrData={result.irr_data} />}
-                    
+                    {/* {selectedOption === 'ping' && result && (
+                        <div className="as-info-card">
+                            <div className="as-info-content">
+                                {result.map((line, index) => (
+                                    <p key={index}>{line}</p>
+                                ))}
+                            </div>
+                        </div>
+                    )} */}
                 </div>
             )}
         </div>
