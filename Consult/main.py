@@ -5,10 +5,9 @@ import subprocess
 import requests
 
 from bgphe import (
-    extract_irr_data,
     extract_info,
-    extract_network_info,
-    extract_whois_data
+    extract_whois_data,
+    ixsp_send_command
 )
 
 app = FastAPI()
@@ -48,7 +47,7 @@ def fetch_data_he(address: str = '') -> str:
 def whois(address: str = None) -> Dict[str, Any]:
     try:
         whois = subprocess.getoutput(f'whois {address}')
-        return  extract_whois_data(whois)
+        return extract_whois_data(whois)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
@@ -74,6 +73,25 @@ def ping(data: str) -> Dict[str, Any]:
 
         ping_result = result.split('\n')
         return {'result': ping_result}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Internal server error: {e}")
+
+
+@app.get('/bgp')
+def quagga(parametro: str) -> Dict[str, Any]:
+    try:
+        pass
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Internal server error: {e}")
+
+
+@app.get('/ixsp')
+def ixsp(parametro: str) -> Dict[str, Any]:
+    try:
+        ix = ixsp_send_command(parametro)
+        return {'ix': ix}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
