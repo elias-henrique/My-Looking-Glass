@@ -1,5 +1,5 @@
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from typing import Dict, Any
 import subprocess
 import requests
@@ -7,7 +7,8 @@ import requests
 from bgphe import (
     extract_info,
     extract_whois_data,
-    ixsp_send_command
+    ixsp_send_command,
+    get_bgp_neighbors
 )
 
 app = FastAPI()
@@ -78,20 +79,20 @@ def ping(data: str) -> Dict[str, Any]:
             status_code=500, detail=f"Internal server error: {e}")
 
 
-@app.get('/bgp')
-def quagga(parametro: str) -> Dict[str, Any]:
-    try:
-        pass
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
-
 @app.get('/ixsp')
 def ixsp(parametro: str) -> Dict[str, Any]:
     try:
         ix = ixsp_send_command(parametro)
         return {'ix': ix}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Internal server error: {e}")
+
+@app.get('/atet')
+def atet(parametro: str) -> Dict[str, Any]:
+    try:
+        parsed_result = get_bgp_neighbors(parametro)
+        return {'atet': parsed_result}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
