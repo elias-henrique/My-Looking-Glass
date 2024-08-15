@@ -83,7 +83,6 @@ body {
   margin: 0;
   font-size: 18px;
   font-weight: bold;
-  white-space: nowrap; /* Evita quebra de linha */
 }
 
 .input {
@@ -127,10 +126,12 @@ body {
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   padding: 25px;
-  max-width: 1000px;
+  max-width: 850px;
   margin: 20px auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  word-wrap: break-word; /* Quebra palavras longas */
 }
+
 
 .as-info-card:hover {
   transform: translateY(-10px);
@@ -141,14 +142,15 @@ body {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #333;
-  white-space: nowrap; /* Evita quebra de linha */
+  color: #ff0000;
 }
 
 .as-info-content p {
   font-size: 16px;
+  text-align: left;
   margin: 10px 0;
   color: #555;
+  white-space: pre-wrap; /* Respeita as quebras de linha */
 }
 
 .as-info-content a {
@@ -167,7 +169,7 @@ body {
 .card-body {
   padding: 20px;
   color: #20232a;
-  max-width: 1000px;
+  max-width: 850px;
   background-color: #f0f0f0;
 }
 
@@ -177,7 +179,7 @@ body {
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 1000px;
+  max-width: 850px;
   margin: 20px auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

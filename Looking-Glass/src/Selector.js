@@ -4,17 +4,17 @@ import './App.css';
 function ASInfo({ asInfo }) {
     return (
         <div className="as-info-card">
-            <h2 className="as-info-title">{asInfo.Owner || "Not available"} - {asInfo.Country && asInfo.Country}</h2>
-            <div className="as-info-content">
-                {asInfo.Responsible && <p><strong>Responsible:</strong> {asInfo.Responsible}</p>}
-                {asInfo.CIDR_v4 && <p><strong>Net Range (v4):</strong> {asInfo.CIDR_v4}</p>}
-                {asInfo.CIDR_v6 && <p><strong>Net Range (v6):</strong> {asInfo.CIDR_v6}</p>}
-                {asInfo.Ownerid && <p><strong>CNPJ:</strong> {asInfo.Ownerid}</p>}
-                {asInfo['e-mail'] && <p><strong>Notify:</strong> {asInfo['e-mail']}</p>}
-                {asInfo.OriginAS && <p><strong>OriginAS:</strong> {asInfo.OriginAS}</p>}
-                {asInfo.changed && <p><strong>Changed:</strong> {asInfo.changed}</p>}
-                {asInfo.created && <p><strong>Created:</strong> {asInfo.created}</p>}
-            </div>
+            <h2 className="as-info-title">{asInfo.owner || "Not available"}</h2>
+            {asInfo.raw.map((line, index) => {
+                const [key, ...value] = line.split(":"); // Divide a linha na primeira ocorrência de ":"
+                return (
+                    <div key={index} className="as-info-content">
+                        <p>
+                            {key.trim() ? <strong>{key.trim()}:</strong> : ""} {value.join(":").trim()}
+                        </p>
+                    </div>
+                );
+            })}
         </div>
     );
 }
@@ -26,7 +26,7 @@ function PingData({ pingData }) {
             <div className="as-info-content">
                 <h2 className="as-info-title">Ping</h2>
                 {pingData.map((line, index) => (
-                    <div key={index} className="ping-info-item">
+                    <div key={index} className="as-info-content">
                         <p>{line}</p>
                     </div>
                 ))}

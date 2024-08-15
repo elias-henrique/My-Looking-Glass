@@ -44,23 +44,37 @@ def fetch_data_he(address: str = '') -> str:
     return response.text
 
 
-@app.get('/whois')
-def whois(address: str = None) -> Dict[str, Any]:
+@app.get('/')
+def meu_ip() -> Dict[str, Any]:
     try:
-        whois = subprocess.getoutput(f'whois {address}')
-        return extract_whois_data(whois)
+        try:
+            ipv4 = requests.get('https://ipv4.json.myip.wtf/').json()
+        except:
+            ipv4 = {}
+
+        try:
+            ipv6 = requests.get('https://ipv6.json.myip.wtf/').json()
+        except:
+            ipv6 = {}
+
+        return {'info': {'ipv4': ipv4, 'ipv6': ipv6}}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
 
 
-@app.get('/')
-def meu_ip() -> Dict[str, Any]:
+@app.get('/whois')
+def whois(address: str = None) -> Dict[str, Any]:
     try:
-        html_content = fetch_data_he()
-        info = extract_info(html_content)
+        whois = subprocess.getoutput(
+            f'whois {address}').replace('\n\n', '\n\\space\n')
+        raw = [i.replace('\\space', ' ')
+               for i in whois.split('\n') if not '%' in i]
 
-        return {'info': info}
+        if raw:
+            del raw[0]
+
+        return {'owner': extract_whois_data(whois), 'raw': raw}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
@@ -70,10 +84,12 @@ def meu_ip() -> Dict[str, Any]:
 def ping(data: str) -> Dict[str, Any]:
     try:
         types,  address = data.split()
-        result = subprocess.getoutput(f'ping -c 5 -{types} {address}')
+        result = subprocess.getoutput(
+            f'ping -c 5 -{types} {address}').replace('\n\n', '\n\\space\n')
 
-        ping_result = result.split('\n')
-        return {'result': ping_result}
+        raw = [i.replace('\\space', ' ') for i in result.split('\n')]
+
+        return {'result': raw}
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
@@ -87,6 +103,7 @@ def ixsp(parametro: str) -> Dict[str, Any]:
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")
+
 
 @app.get('/atet')
 def atet(parametro: str) -> Dict[str, Any]:
