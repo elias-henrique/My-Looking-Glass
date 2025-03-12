@@ -17,6 +17,7 @@ function App() {
           <Button className="button" onClick={toggleSelector}>São Paulo, IX <span className="circle">BR</span></Button>
           <Button className="button" onClick={toggleSelector}>New York, AT&T <span className="circle">US</span></Button>
         </div>
+        <Button className="button" onClick={toggleSelector}>FRRouting, FRR <span className="circle">BR</span></Button>
         {showSelector && <Selector />}
       </header>
     </div>
