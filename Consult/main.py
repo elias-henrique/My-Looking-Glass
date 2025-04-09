@@ -3,10 +3,8 @@ from fastapi import FastAPI, HTTPException, Request
 from typing import Dict, Any
 import subprocess
 import requests
-import ipaddress  # Add this import for IP address validation
 
 from bgphe import (
-    extract_info,
     extract_whois_data,
     ixsp_send_command,
     get_bgp_neighbors
@@ -70,7 +68,7 @@ def whois(address: str = None) -> Dict[str, Any]:
         whois = subprocess.getoutput(
             f'whois {address}').replace('\n\n', '\n\\space\n')
         raw = [i.replace('\\space', ' ')
-               for i in whois.split('\n') if not '%' in i]
+            for i in whois.split('\n') if not '%' in i]
 
         if raw:
             del raw[0]
@@ -84,10 +82,23 @@ def whois(address: str = None) -> Dict[str, Any]:
 @app.get('/ping')
 def ping(data: str) -> Dict[str, Any]:
     try:
-        ip_type = ipaddress.ip_address(data).version
-        ping_type = '4' if ip_type == 4 else '6'
         result = subprocess.getoutput(
-            f'ping -c 5 -{ping_type} {data}')
+            f'ping -c 5 {data}')
+
+        return {'result': result}
+    except ValueError:
+        raise HTTPException(
+            status_code=400, detail="Invalid IP address format")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Internal server error: {e}")
+
+
+@app.get('/traceroute')
+def traceroute(data: str) -> Dict[str, Any]:
+    try:
+        result = subprocess.getoutput(
+            f'traceroute {data}')
 
         return {'result': result}
     except ValueError:
@@ -99,9 +110,9 @@ def ping(data: str) -> Dict[str, Any]:
 
 
 @app.get('/ixsp')
-def ixsp(parametro: str) -> Dict[str, Any]:
+def ixsp(parameter: str) -> Dict[str, Any]:
     try:
-        ix = ixsp_send_command(parametro)
+        ix = ixsp_send_command(parameter)
         return {'ix': ix}
     except Exception as e:
         raise HTTPException(
@@ -109,9 +120,9 @@ def ixsp(parametro: str) -> Dict[str, Any]:
 
 
 @app.get('/atet')
-def atet(parametro: str) -> Dict[str, Any]:
+def atet(parameter: str) -> Dict[str, Any]:
     try:
-        parsed_result = get_bgp_neighbors(parametro)
+        parsed_result = get_bgp_neighbors(parameter)
         return {'atet': parsed_result}
     except Exception as e:
         raise HTTPException(
