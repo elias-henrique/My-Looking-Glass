@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException, Request
 from typing import Dict, Any
 import subprocess
 import requests
+import ipaddress  # Add this import for IP address validation
 
 from bgphe import (
     extract_info,
@@ -83,13 +84,15 @@ def whois(address: str = None) -> Dict[str, Any]:
 @app.get('/ping')
 def ping(data: str) -> Dict[str, Any]:
     try:
-        types,  address = data.split()
+        ip_type = ipaddress.ip_address(data).version
+        ping_type = '4' if ip_type == 4 else '6'
         result = subprocess.getoutput(
-            f'ping -c 5 -{types} {address}').replace('\n\n', '\n\\space\n')
+            f'ping -c 5 -{ping_type} {data}')
 
-        raw = [i.replace('\\space', ' ') for i in result.split('\n')]
-
-        return {'result': raw}
+        return {'result': result}
+    except ValueError:
+        raise HTTPException(
+            status_code=400, detail="Invalid IP address format")
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Internal server error: {e}")

@@ -2,6 +2,7 @@ import telnetlib
 import time
 from pprint import pprint
 import re
+import json
 
 
 def convert_to_bytes(command):
@@ -62,28 +63,23 @@ def parse_bgp_output(output):
 
 
 def ixsp_send_command(address):
-    """Establishes a Telnet connection to the IXSP router, sends a command, and returns the output."""
+    """Establishes a Telnet connection to the IXSP router, sends a command, and returns the output as JSON."""
     with telnetlib.Telnet("lg.sp.ptt.br") as telnet:
         telnet.read_until(b"lgpub-sp>", timeout=5)
         time.sleep(3)
-        telnet.write(convert_to_bytes('show bgp ipv4 unicast ' + address))
-        result = ""
-
-        while True:
-            index, match, output = telnet.expect(
-                [b"--More--", b"lgpub-sp>"], timeout=5)
-            output = output.decode("utf-8")
-            output = re.sub(" +--More--| +\x08+ +\x08+", "\n", output)
-            result += output
-            if index in (1, -1):
-                break
-            telnet.write(b" ")
-            time.sleep(1)
-            result = result.replace("\r\n", "\n")
-
-        parsed_result = parse_bgp_output(result)
-        return parsed_result
-
+        telnet.write(convert_to_bytes('show ip bgp ' + address + ' json'))
+        result = telnet.read_until(b"lgpub-sp>", timeout=5).decode("utf-8")
+        
+        # Extract JSON part from the response
+        json_match = re.search(r'{.*}', result, re.DOTALL)
+        if json_match:
+            json_data = json_match.group(0)
+            try:
+                return json.loads(json_data)
+            except json.JSONDecodeError:
+                raise ValueError("Failed to parse JSON from the response.")
+        else:
+            raise ValueError("No JSON data found in the response.")
 
 # if __name__ == "__main__":
 #     bgp_result = ixsp_send_command("45.190.200.51")
