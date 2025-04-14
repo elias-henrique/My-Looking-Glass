@@ -1,14 +1,6 @@
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException, Request
-from typing import Dict, Any
-import subprocess
-import requests
-
-from bgphe import (
-    extract_whois_data,
-    ixsp_send_command,
-    get_bgp_neighbors
-)
+from routers import ip_router, whois_router, network_router
 
 app = FastAPI()
 
@@ -20,114 +12,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_URL = 'https://bgp.he.net/'
-
-
-def fetch_data_he(address: str = '') -> str:
-    """Faz a requisição HTTP e retorna o texto HTML."""
-    if address:
-        if '/' in address:
-            url = f'{BASE_URL}net/{address}'
-        else:
-            url = f'{BASE_URL}ip/{address}'
-    else:
-        url = BASE_URL
-
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        raise HTTPException(
-            status_code=400, detail=f"Error fetching data from {url}: {e}")
-
-    return response.text
-
-
-@app.get('/')
-def meu_ip() -> Dict[str, Any]:
-    try:
-        try:
-            ipv4 = requests.get('https://ipv4.json.myip.wtf/').json()
-        except:
-            ipv4 = {}
-
-        try:
-            ipv6 = requests.get('https://ipv6.json.myip.wtf/').json()
-        except:
-            ipv6 = {}
-
-        return {'info': {'ipv4': ipv4, 'ipv6': ipv6}}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
-
-@app.get('/whois')
-def whois(address: str = None) -> Dict[str, Any]:
-    try:
-        whois = subprocess.getoutput(
-            f'whois {address}').replace('\n\n', '\n\\space\n')
-        raw = [i.replace('\\space', ' ')
-            for i in whois.split('\n') if not '%' in i]
-
-        if raw:
-            del raw[0]
-
-        return {'owner': extract_whois_data(whois), 'raw': raw}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
-
-@app.get('/ping')
-def ping(data: str) -> Dict[str, Any]:
-    try:
-        result = subprocess.getoutput(
-            f'ping -c 5 {data}')
-
-        return {'result': result}
-    except ValueError:
-        raise HTTPException(
-            status_code=400, detail="Invalid IP address format")
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
-
-@app.get('/traceroute')
-def traceroute(data: str) -> Dict[str, Any]:
-    try:
-        result = subprocess.getoutput(
-            f'traceroute {data}')
-
-        return {'result': result}
-    except ValueError:
-        raise HTTPException(
-            status_code=400, detail="Invalid IP address format")
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
-
-@app.get('/ixsp')
-def ixsp(parameter: str) -> Dict[str, Any]:
-    try:
-        ix = ixsp_send_command(parameter)
-        return {'ix': ix}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
-
-@app.get('/atet')
-def atet(parameter: str) -> Dict[str, Any]:
-    try:
-        parsed_result = get_bgp_neighbors(parameter)
-        return {'atet': parsed_result}
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Internal server error: {e}")
-
+# Include routers for modular endpoints
+app.include_router(ip_router, prefix="/ip", tags=["IP Utilities"])
+app.include_router(whois_router, prefix="/whois", tags=["Whois"])
+app.include_router(network_router, prefix="/network", tags=["Network Utilities"])
 
 if __name__ == "__main__":
     import uvicorn

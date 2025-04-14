@@ -33,7 +33,7 @@ def parse_bgp_output(output):
     from_match = re.findall(r"from (.+?)\n", output)
 
     x = [{"index": idx + 1, "hours": h, "as_path": p, "to": f}
-         for idx, (h, p, f) in enumerate(zip(hours_match, as_path_match, from_match))]
+        for idx, (h, p, f) in enumerate(zip(hours_match, as_path_match, from_match))]
     bgp_data['routes'] = x
     return bgp_data
 
