@@ -14,9 +14,9 @@ def ixsp_send_command(address: str) -> dict:
     return _ixsp_send_generic_command(f"show ip bgp {address} json")
 
 
-def ixsp_send_community_command(community: str) -> dict:
-    """Sends a 'show bgp community' command to the IXSP router and returns the output as JSON."""
-    return _ixsp_send_generic_command(f"show bgp community {community} json")
+def ixsp_send_command_v2(command: str) -> dict:
+    """Sends a generic command to the IXSP router and returns the output as JSON."""
+    return _ixsp_send_generic_command(command)
 
 
 def _ixsp_send_generic_command(command: str) -> dict:
